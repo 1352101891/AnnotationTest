@@ -1,0 +1,48 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <title></title>
+    <script type="text/javascript">
+        var url1 = "file:///etc/hosts";
+        var url2 = "file:///android_asset/main.html";
+        var url3 = "file:///android_asset/userInfo.properties";
+        //这个function是需要被java调用的
+        function jsText(text){
+            document.getElementById('ttt').innerHTML=text;
+        }
+
+        window.onload= function(){
+            document.getElementById('ttt').innerHTML="你哈哈哈哈";
+        }
+
+        function myFunction(){
+            var arm = url3;
+            var xmlhttp;
+            document.getElementById('ttt').innerHTML=arm;
+            if (window.XMLHttpRequest)
+            {
+                xmlhttp=new XMLHttpRequest();
+            }
+            xmlhttp.onreadystatechange=function()
+            {
+                document.getElementById('ttt').innerHTML="xmlhttp.status="+xmlhttp.readyState;
+                if (xmlhttp.readyState==4)
+                {    document.getElementById('content').innerHTML=xmlhttp.responseText;
+                     console.log(xmlhttp.responseText);
+                }
+            }
+            xmlhttp.open("GET",arm);
+            xmlhttp.send(null);
+        }
+
+        </script>
+</head>
+<body>
+<div style="width:100px,height:100px" >这是apk页面</div>
+<input type="button" onclick="jsi.showDialog('测试js调用系统api')" value="调用系统api Toast"/><br/>
+<input type="button" onclick="jsi.showToast('测试java回调js')"    value="让java方法回调html中的js方法"/>
+<button onclick="myFunction()">Try it</button>
+<div style="width:100px,height:100px" id="ttt"></div>
+<div style="width:100px,height:100px" id="content"></div>
+</body>
+</html>
