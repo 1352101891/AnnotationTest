@@ -6,26 +6,31 @@
     android:layout_height="match_parent"
     tools:context=".view.MainActivity">
 
-    <ScrollView
-        android:background="@color/gray"
+    <com.example.myapplication.cusview.AutoTextview
+        android:id="@+id/auto_text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
-            android:id="@+id/content_linear"
-            android:orientation="vertical"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_below="@+id/auto_text"
+        android:layout_marginTop="20dp"
+        android:id="@+id/content_linear"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/text"
+            android:gravity="center"
+            android:text="@string/text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <WebView
+            android:visibility="gone"
+            android:id="@+id/webview_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <TextView
-                android:id="@+id/text"
-                android:gravity="center"
-                android:text="@string/text"
-                android:layout_width="match_parent"
-                android:layout_height="500dp" />
 
-            <WebView
-                android:id="@+id/webview_content"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"></WebView>
-        </LinearLayout>
-    </ScrollView>
+        </WebView>
+    </LinearLayout>
+
 </RelativeLayout>
