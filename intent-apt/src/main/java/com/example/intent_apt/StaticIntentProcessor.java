@@ -29,7 +29,6 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 
-import sun.rmi.runtime.Log;
 
 
 @SupportedAnnotationTypes(value = {"com.example.intent_apt.annotations.StaticIntentKey"})
@@ -49,39 +48,33 @@ public class StaticIntentProcessor extends AbstractProcessor {
         return false;
     }
 
-
-    // 查找所有的需要注入的类描述
     private List<InjectDesc> findInjectDesc(Set<? extends TypeElement> set, RoundEnvironment re) {
 
         Map<TypeElement, List<Object[]>> targetClassMap = new HashMap<>();
 
-        // 先获取所有被StaticIntentKey标示的元素
+
         Set<? extends Element> elements = re.getElementsAnnotatedWith(StaticIntentKey.class);
         for (Element element : elements) {
-            // 只关心类别是属性的元素
+
             if (element.getKind() != ElementKind.FIELD) {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "only support field");
                 continue;
             }
 
-            // 此处找到的是类的描述类型
-            // 因为我们的StaticIntentKey的注解描述是field，所以EnclosingElement元素是类
             TypeElement classType = (TypeElement) element.getEnclosingElement();
 
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "current classType is:"+classType);
 
-            // 对类做缓存，避免重复
             List<Object[]> nameList = targetClassMap.get(classType);
             if (nameList == null) {
                 nameList = new ArrayList<>();
                 targetClassMap.put(classType, nameList);
             }
 
-            // 被注解的值，如staticName
             String fieldName = element.getSimpleName().toString();
-            // 被注解的值的类型，如String，int
+
             String fieldTypeName = element.asType().toString();
-            // 注解本身的值，如key_name
+
             Integer value = element.getAnnotation(StaticIntentKey.class).value();
 
             Object[] names = new Object[]{fieldName, fieldTypeName, value};
@@ -93,7 +86,6 @@ public class StaticIntentProcessor extends AbstractProcessor {
             String className = entry.getKey().getQualifiedName().toString();
             System.out.println(className);
 
-            // 封装成自定义的描述符
             InjectDesc injectDesc = new InjectDesc();
             injectDesc.activityName = className;
             List<Object[]> value = entry.getValue();
@@ -120,7 +112,7 @@ public class StaticIntentProcessor extends AbstractProcessor {
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        // 支持java1.7
+        // 支持java1.8
         return SourceVersion.RELEASE_7;
     }
 

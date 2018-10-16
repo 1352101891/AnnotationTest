@@ -18,11 +18,17 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.intent_apt.annotations.StaticIntentKey;
 import com.example.myapplication.R;
+import com.example.viewfactory.ViewBinderFactory;
 
 public class MainActivity extends AppCompatActivity {
+
+    @StaticIntentKey(R.id.auto_text)
+    public TextView auto_text;
     WebView webView;
     Handler handler=new Handler();
     String url="file:///" + Environment.getExternalStorageDirectory().getPath() + "/main.html";
@@ -35,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ViewBinderFactory.binderViews(this);
+        auto_text.setText("我被绑定成功！");
+
         Intent intent=getIntent();
         if (intent!=null){
             url=intent.getStringExtra("path")==null?"file:///android_asset/main.html":intent.getStringExtra("path");

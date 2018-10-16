@@ -1,8 +1,10 @@
 package com.example.viewbinder;
 
-import android.app.Activity;
+import android.widget.TextView;
+import com.example.myapplication.view.AnnotationActivity;
 
 public final class ViewBinder {
-  public static void InitViews(Activity activity) {
+  public static void InitViews(AnnotationActivity activity) {
+    activity.textView = (TextView) activity.findViewById(2131492947);
   }
 }

@@ -9,7 +9,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-//        multiDexEnabled true
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -38,8 +38,9 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:23.+'
     implementation 'com.android.support:recyclerview-v7:23.+'
     implementation 'com.squareup:javapoet:1.9.0'
-//    annotationProcessor project(':intent-apt')
-//    implementation project(path: ':intent-apt')
-    //    implementation 'com.android.support:multidex:1.0.0'
-//    implementation files('libs/rt.jar')
+    annotationProcessor project(':intent-apt')
+    implementation project(path: ':intent-apt')
+    implementation 'com.android.support:multidex:1.0.0'
+    //    implementation files('libs/rt.jar')
+    //implementation files('libs/rt.jar')
 }
