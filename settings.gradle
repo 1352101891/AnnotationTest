@@ -1,1 +1,2 @@
-include ':app', ':intent-apt'
+include ':app', ':binder-apt'
+//, ':binderfactory'

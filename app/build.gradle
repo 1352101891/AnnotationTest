@@ -31,6 +31,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
+    lintOptions {
+        // To see problems right away, also nice for Travis CI
+        textOutput 'stdout'
+        // 防止annotationprocessor生成文件之前编译错误，而终止
+        abortOnError true
+    }
+
 }
 
 dependencies {
@@ -38,9 +45,8 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:23.+'
     implementation 'com.android.support:recyclerview-v7:23.+'
     implementation 'com.squareup:javapoet:1.9.0'
-    annotationProcessor project(':intent-apt')
-    implementation project(path: ':intent-apt')
+    annotationProcessor project(':binder-apt')
+    implementation project(path: ':binder-apt')
     implementation 'com.android.support:multidex:1.0.0'
-    //    implementation files('libs/rt.jar')
-    //implementation files('libs/rt.jar')
+   // implementation project(path: ':binderfactory')
 }
