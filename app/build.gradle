@@ -16,7 +16,7 @@ android {
     defaultConfig {
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [IntentAptIndex: 'org.egova.test.MyIntentAptIndex']
+//                arguments = [IntentAptIndex: 'org.egova.test.MyIntentAptIndex']
             }
         }
     }
@@ -35,7 +35,7 @@ android {
         // To see problems right away, also nice for Travis CI
         textOutput 'stdout'
         // 防止annotationprocessor生成文件之前编译错误，而终止
-        abortOnError true
+        abortOnError false
     }
 
 }
@@ -48,5 +48,7 @@ dependencies {
     annotationProcessor project(':binder-apt')
     implementation project(path: ':binder-apt')
     implementation 'com.android.support:multidex:1.0.0'
-   // implementation project(path: ':binderfactory')
+    // implementation project(path: ':binderfactory')
+    //implementation project(':aptlib')
+    //annotationProcessor project(':aptlib')
 }

@@ -21,14 +21,16 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.lvqiu.DynamicIntentProcessor;
-import com.lvqiu.intent_apt.annotations.DynamicIntentKey;
-import com.lvqiu.intent_apt.annotations.StaticIntentKey;
+
+import com.lvqiu.intent_apt.annotations.DynamicBindKey;
+import com.lvqiu.intent_apt.annotations.StaticBindKey;
 import com.lvqiu.myapplication.R;
 
 
+
 public class MainActivity extends AppCompatActivity {
-    @DynamicIntentKey(R.id.auto_text)
-    @StaticIntentKey(R.id.auto_text)
+    @DynamicBindKey(R.id.auto_text)
+    @StaticBindKey(R.id.auto_text)
     public TextView auto_text;
     WebView webView;
     Handler handler=new Handler();

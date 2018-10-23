@@ -7,18 +7,17 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lvqiu.DynamicIntentProcessor;
-import com.lvqiu.intent_apt.annotations.DynamicIntentKey;
-import com.lvqiu.intent_apt.annotations.StaticIntentKey;
-
+import com.lvqiu.intent_apt.tool.BinderFactory;
+import com.lvqiu.intent_apt.annotations.DynamicBindKey;
+import com.lvqiu.intent_apt.annotations.StaticBindKey;
 import com.lvqiu.myapplication.R;
 
 import java.util.ArrayList;
 
 
 public class AnnotationActivity extends Activity {
-    @DynamicIntentKey(R.id.auto_text)
-    @StaticIntentKey(R.id.text)
+    @DynamicBindKey(R.id.auto_text)
+    @StaticBindKey(R.id.text)
     public TextView textView;
 
     @Override
@@ -26,8 +25,10 @@ public class AnnotationActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-         DynamicIntentProcessor.Init(this);
+//         DynamicIntentProcessor.Init(this);
      //   ViewBinderFactory.bindViews(this);
+
+        BinderFactory.init(this);
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,22 +1,26 @@
 package com.lvqiu.intent_apt.staticprocessor;
 
 
-import com.lvqiu.intent_apt.annotations.StaticIntentKey;
+import com.lvqiu.intent_apt.annotations.XAutowaired;
+import com.lvqiu.intent_apt.annotations.XService;
 import com.lvqiu.intent_apt.bean.InjectDesc;
 import com.google.auto.service.AutoService;
-import com.squareup.javapoet.ClassName;
-import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.TypeName;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
+import com.lvqiu.intent_apt.collect.BaseAnnotationCollector;
+import com.lvqiu.intent_apt.collect.CollectorFactory;
+import com.lvqiu.intent_apt.generatefactory.BaseGenerator;
+import com.lvqiu.intent_apt.generatefactory.GeneratorFactory;
+
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Completion;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
+
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
@@ -32,96 +36,69 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 
 
-
-@SupportedAnnotationTypes(value = {"com.example.intent_apt.annotations.StaticIntentKey"})
+@SupportedAnnotationTypes(value = {"com.lvqiu.intent_apt.annotations.StaticIntentKey"
+        ,"com.lvqiu.intent_apt.annotations.XAutowaired"
+        ,"com.lvqiu.intent_apt.annotations.XService"})
 @SupportedOptions(value = {"IntentAptIndex", "verbose"})
 @AutoService(Processor.class)
 public class StaticIntentProcessor extends AbstractProcessor {
+    private final String OPTION_INDEX="IntentAptIndex";
+    private final String OPTION_VERBOSE="verbose";
+
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
-        Messager messager=processingEnv.getMessager();
-        Filer mFiler = processingEnv.getFiler();
-        GenerateJavaFile generateJavaFile=new GenerateJavaFile(mFiler,messager);
+        String index = processingEnv.getOptions().get(OPTION_INDEX);
+        String verbose = processingEnv.getOptions().get(OPTION_VERBOSE);
 
-        List<InjectDesc> injectDescs=findInjectDesc(annotations,roundEnv);
-        generateJavaFile.generate(injectDescs);
+        Set<String> annotationSet= getSupportedAnnotationTypes();
+        HashMap<Class<?>,List<InjectDesc>> annotationToClassSetMap =findAllDesc( roundEnv,annotationSet);
+
+        //first filed deal
+        for (Class<?> clazz: annotationToClassSetMap.keySet()) {
+            if (!clazz.getSimpleName().equals(XService.class.getSimpleName())) {
+                BaseGenerator generator = GeneratorFactory.createByAnnotation(clazz, processingEnv);
+                generator.generate(clazz,annotationToClassSetMap.get(clazz));
+            }
+        }
+
+        //last deal service class
+        List<InjectDesc> list= annotationToClassSetMap.get(XAutowaired.class);
+        list.addAll(annotationToClassSetMap.get(XService.class));
+        BaseGenerator generator = GeneratorFactory.createByAnnotation(XService.class, processingEnv);
+        generator.generate(XService.class,list);
+
         return false;
     }
 
-    private List<InjectDesc> findInjectDesc(Set<? extends TypeElement> set, RoundEnvironment re) {
+    private HashMap<Class<?>,List<InjectDesc>> findAllDesc(RoundEnvironment re,Set<String> anoSet) {
+        HashMap<Class<?>,List<InjectDesc>> annotationToClassSetMap=new HashMap<>();
+        for (String annoName: anoSet) {
+            try {
+                Class<? extends Annotation> classz= (Class<? extends Annotation>) getClass().getClassLoader().loadClass(annoName);;
+                Target annotation = classz.getAnnotation(Target.class);
+                if (annotation==null || annotation.value().length==0) {
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "not declare the annotation ElementType!");
+                    continue;
+                }
 
-        Map<TypeElement, List<Object[]>> targetClassMap = new HashMap<>();
-
-
-        Set<? extends Element> elements = re.getElementsAnnotatedWith(StaticIntentKey.class);
-        for (Element element : elements) {
-
-            if (element.getKind() != ElementKind.FIELD) {
-                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "only support field");
-                continue;
+                Set<? extends Element> elements = re.getElementsAnnotatedWith(classz);
+                BaseAnnotationCollector collector= CollectorFactory.create(classz,processingEnv);
+                annotationToClassSetMap.put(classz,collector.findInjectDesc(elements));
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
-
-            TypeElement classType = (TypeElement) element.getEnclosingElement();
-
-            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "current classType is:"+classType);
-
-            List<Object[]> nameList = targetClassMap.get(classType);
-            if (nameList == null) {
-                nameList = new ArrayList<>();
-                targetClassMap.put(classType, nameList);
-            }
-
-            Set<Modifier> modifiers= element.getModifiers();
-            //如果不是public类型，不能类外部初始化，跳过
-           if(!modifiers.contains(Modifier.PUBLIC)){
-                continue;
-            }
-
-            String fieldName = element.getSimpleName().toString();
-
-            String fieldTypeName = element.asType().toString();
-
-            Integer value = element.getAnnotation(StaticIntentKey.class).value();
-
-            Object[] names = new Object[]{fieldName, fieldTypeName, value};
-            nameList.add(names);
         }
 
-        List<InjectDesc> injectDescList = new ArrayList<>(targetClassMap.size());
-        for (Map.Entry<TypeElement, List<Object[]>> entry : targetClassMap.entrySet()) {
-            String className = entry.getKey().getQualifiedName().toString();
-            System.out.println(className);
-
-            InjectDesc injectDesc = new InjectDesc();
-            injectDesc.activityName = className;
-            List<Object[]> value = entry.getValue();
-            injectDesc.fieldTypeNames = new String[value.size()];
-            injectDesc.fieldNames = new String[value.size()];
-            injectDesc.fieldValues = new Integer[value.size()];
-            for (int i = 0; i < value.size(); i++) {
-                Object[] names = value.get(i);
-                injectDesc.fieldNames[i] = (String) names[0];
-                injectDesc.fieldTypeNames[i] = (String) names[1];
-                injectDesc.fieldValues[i] = (Integer) names[2];
-            }
-            injectDescList.add(injectDesc);
-        }
-
-        return injectDescList;
+        return annotationToClassSetMap;
     }
 
-
-    @Override
-    public Set<String> getSupportedOptions() {
-        return super.getSupportedOptions();
-    }
 
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        // 支持java1.8
-        return SourceVersion.RELEASE_8;
+        // 支持java1.7
+        return SourceVersion.RELEASE_7;
     }
 
     @Override
