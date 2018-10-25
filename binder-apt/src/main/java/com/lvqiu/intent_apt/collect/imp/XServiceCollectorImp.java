@@ -26,7 +26,7 @@ public class XServiceCollectorImp extends BaseAnnotationCollector {
     }
 
     public List<InjectDesc> findInjectDesc( Set<? extends Element> elements) {
-        if (elements==null){
+        if (elements==null || elements.size()==0){
             return null;
         }
 
@@ -34,12 +34,17 @@ public class XServiceCollectorImp extends BaseAnnotationCollector {
 
         for (Element element : elements) {
 
+            Set<Modifier> modifiers= element.getModifiers();
+            //如果不是public类型，不能类外部初始化，跳过
+            if(!modifiers.contains(Modifier.PUBLIC)){
+                continue;
+            }
             if (element.getKind() != ElementKind.CLASS) {
                 processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "only support CLASS!" );
                 continue;
             }
 
-            TypeElement classType = (TypeElement) element.getEnclosingElement();
+            TypeElement classType = (TypeElement) element;
 
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "current classType is:"+classType);
 
@@ -48,13 +53,6 @@ public class XServiceCollectorImp extends BaseAnnotationCollector {
                 nameList = new ArrayList<>();
                 targetClassMap.put(classType, nameList);
             }
-
-            Set<Modifier> modifiers= element.getModifiers();
-            //如果不是public类型，不能类外部初始化，跳过
-            if(!modifiers.contains(Modifier.PUBLIC)){
-                continue;
-            }
-
         }
 
         List<InjectDesc> injectDescList = new ArrayList<>(targetClassMap.size());

@@ -22,8 +22,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.lvqiu.DynamicIntentProcessor;
 
+import com.lvqiu.dao.humanDao;
 import com.lvqiu.intent_apt.annotations.DynamicBindKey;
 import com.lvqiu.intent_apt.annotations.StaticBindKey;
+import com.lvqiu.intent_apt.annotations.XAutowaired;
 import com.lvqiu.myapplication.R;
 
 
@@ -37,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
     String url="file:///" + Environment.getExternalStorageDirectory().getPath() + "/main.html";
     int REQUEST_WRITE_EXTERNAL_STORAGE=111;
     int REQUEST_READ_EXTERNAL_STORAGE=1113;
+
+    @XAutowaired
+    public humanDao Dao;
 
 
     @SuppressLint("JavascriptInterface")

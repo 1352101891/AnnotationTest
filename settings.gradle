@@ -1,2 +1,2 @@
-include ':app', ':binder-apt', ':aptlib'
+include ':app', ':binder-apt'
 //, ':binderfactory'

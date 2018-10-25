@@ -49,7 +49,7 @@ public class GeneratorForService extends BaseGenerator{
             }
         }
 
-        //将包含autowired注解属性的类作为key，类内部的autowired属性和对应的实现类封装程map作为value
+
         if (autoList.size()>0)
         for (InjectDesc interf: autoList) {
             String[] fields= interf.fieldTypeNames;

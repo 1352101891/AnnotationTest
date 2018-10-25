@@ -26,7 +26,7 @@ public class StaticCollectorImp extends BaseAnnotationCollector {
     }
 
     public List<InjectDesc> findInjectDesc( Set<? extends Element> elements) {
-        if (elements==null){
+        if (elements==null || elements.size()==0){
             return null;
         }
 

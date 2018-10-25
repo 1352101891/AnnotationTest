@@ -1,9 +1,12 @@
 package com.lvqiu.dao.imp;
 
 import com.lvqiu.dao.humanDao;
+import com.lvqiu.intent_apt.annotations.XService;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@XService
 public class humanDaoImp implements humanDao {
 
     public List<String> getAllHuman(){

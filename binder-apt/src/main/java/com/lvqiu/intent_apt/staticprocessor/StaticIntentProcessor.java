@@ -1,6 +1,7 @@
 package com.lvqiu.intent_apt.staticprocessor;
 
 
+
 import com.lvqiu.intent_apt.annotations.XAutowaired;
 import com.lvqiu.intent_apt.annotations.XService;
 import com.lvqiu.intent_apt.bean.InjectDesc;
@@ -15,6 +16,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,9 +38,7 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 
 
-@SupportedAnnotationTypes(value = {"com.lvqiu.intent_apt.annotations.StaticIntentKey"
-        ,"com.lvqiu.intent_apt.annotations.XAutowaired"
-        ,"com.lvqiu.intent_apt.annotations.XService"})
+
 @SupportedOptions(value = {"IntentAptIndex", "verbose"})
 @AutoService(Processor.class)
 public class StaticIntentProcessor extends AbstractProcessor {
@@ -55,7 +55,7 @@ public class StaticIntentProcessor extends AbstractProcessor {
         Set<String> annotationSet= getSupportedAnnotationTypes();
         HashMap<Class<?>,List<InjectDesc>> annotationToClassSetMap =findAllDesc( roundEnv,annotationSet);
 
-        //first filed deal
+        //first field_annotation filed to deal
         for (Class<?> clazz: annotationToClassSetMap.keySet()) {
             if (!clazz.getSimpleName().equals(XService.class.getSimpleName())) {
                 BaseGenerator generator = GeneratorFactory.createByAnnotation(clazz, processingEnv);
@@ -63,7 +63,7 @@ public class StaticIntentProcessor extends AbstractProcessor {
             }
         }
 
-        //last deal service class
+        //last service_annotation class to  deal
         List<InjectDesc> list= annotationToClassSetMap.get(XAutowaired.class);
         list.addAll(annotationToClassSetMap.get(XService.class));
         BaseGenerator generator = GeneratorFactory.createByAnnotation(XService.class, processingEnv);
@@ -99,6 +99,15 @@ public class StaticIntentProcessor extends AbstractProcessor {
     public SourceVersion getSupportedSourceVersion() {
         // 支持java1.7
         return SourceVersion.RELEASE_7;
+    }
+
+    @Override
+    public Set<String> getSupportedAnnotationTypes() {
+        Set<String> set=new HashSet<String>();
+        set.add("com.lvqiu.intent_apt.annotations.XAutowaired");
+        set.add("com.lvqiu.intent_apt.annotations.XService");
+        set.add("com.lvqiu.intent_apt.annotations.StaticBindKey");
+        return set;
     }
 
     @Override
