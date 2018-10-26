@@ -26,7 +26,7 @@ public class AnnotationActivity extends Activity {
         setContentView(R.layout.activity_main);
 
 //         DynamicIntentProcessor.Init(this);
-     //   ViewBinderFactory.bindViews(this);
+
 
         BinderFactory.init(this);
 

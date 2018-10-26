@@ -65,6 +65,9 @@ public class StaticIntentProcessor extends AbstractProcessor {
 
         //last service_annotation class to  deal
         List<InjectDesc> list= annotationToClassSetMap.get(XAutowaired.class);
+        if(list==null || list.size()==0){
+            return false;
+        }
         list.addAll(annotationToClassSetMap.get(XService.class));
         BaseGenerator generator = GeneratorFactory.createByAnnotation(XService.class, processingEnv);
         generator.generate(XService.class,list);

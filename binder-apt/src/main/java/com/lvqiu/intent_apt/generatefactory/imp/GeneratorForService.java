@@ -54,13 +54,15 @@ public class GeneratorForService extends BaseGenerator{
             if (fields!=null && fields.length>0){
                 for (int i=0;i<fields.length;i++) {
                     if (isImp(fields[i],serviceList.get(i).interfaces)){
+                        FieldBean fieldBean=new FieldBean(interf.fieldTypeNames[i],interf.fieldNames[i]);
+                        ClassBean classBean=new ClassBean(serviceList.get(i).className,java.lang.reflect.Modifier.PUBLIC);
                         if (map.get(interf.className)==null){
                             Map hashMap=new HashMap<FieldBean, ClassBean>();
-                            hashMap.put(fields[i],serviceList.get(i).className);
+                            hashMap.put(fieldBean,classBean);
                             map.put(interf.className,hashMap);
                         }else {
                             Map hashMap=map.get(interf.className);
-                            hashMap.put(fields[i],serviceList.get(i).className);
+                            hashMap.put(fieldBean,classBean);
                         }
                     }
                 }
@@ -93,7 +95,7 @@ public class GeneratorForService extends BaseGenerator{
             for (Map.Entry ac:  fieldmap.entrySet()) {
                 ClassName filedInterFace= getClassName(((FieldBean)ac.getKey()).getFieldType());
                 ClassName filedImp= getClassName(((ClassBean)ac.getValue()).getClassName());
-                main.addStatement("\t ($T(clazz)).$S= new $T",initClass, ((FieldBean) ac.getKey()).getFieldNaame(),filedImp );
+                main.addStatement("\t (($T)clazz).$N= new $T()",initClass, ((FieldBean) ac.getKey()).getFieldNaame(),filedImp );
             }
             main.addCode("\treturn;  \n}\n");
             method=main.build();

@@ -31,7 +31,9 @@ public class GeneratorForStatic extends BaseGenerator{
     public  void generate(Class<?> clazz,List<InjectDesc> injectDescs) {
 
         ArrayList<InjectDesc> binderActivities=new ArrayList<>();
-
+        if (injectDescs==null || injectDescs.size()==0){
+            return;
+        }
         for (InjectDesc injectDesc: injectDescs) {
             generateViewBinder(injectDesc);
             binderActivities.add(injectDesc);

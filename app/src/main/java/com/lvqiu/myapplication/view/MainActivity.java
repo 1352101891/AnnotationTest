@@ -26,6 +26,7 @@ import com.lvqiu.dao.humanDao;
 import com.lvqiu.intent_apt.annotations.DynamicBindKey;
 import com.lvqiu.intent_apt.annotations.StaticBindKey;
 import com.lvqiu.intent_apt.annotations.XAutowaired;
+import com.lvqiu.intent_apt.tool.BinderFactory;
 import com.lvqiu.myapplication.R;
 
 
@@ -49,10 +50,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        DynamicIntentProcessor.Init(this);
-       // ViewBinderFactory.(this);
-
-        auto_text.setText("我被绑定成功！");
+       // DynamicIntentProcessor.Init(this);
+        BinderFactory.init(this);
+        auto_text.setText("我被绑定成功！"+Dao.getAllHuman().toString());
 
         Intent intent=getIntent();
         if (intent!=null){

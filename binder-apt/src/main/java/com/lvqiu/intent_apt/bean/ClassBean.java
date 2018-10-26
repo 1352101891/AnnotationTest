@@ -1,12 +1,10 @@
 package com.lvqiu.intent_apt.bean;
 
-import java.lang.reflect.Modifier;
-
 public class ClassBean {
     private String className;
-    private Modifier modify;
+    private int modify;
 
-    public ClassBean(String className, Modifier modify) {
+    public ClassBean(String className, int modify) {
         this.className = className;
         this.modify = modify;
     }
@@ -19,11 +17,11 @@ public class ClassBean {
         this.className = className;
     }
 
-    public Modifier getModify() {
+    public int getModify() {
         return modify;
     }
 
-    public void setModify(Modifier modify) {
+    public void setModify(int modify) {
         this.modify = modify;
     }
 }
