@@ -62,11 +62,11 @@ public class XAutoCollectorImp extends BaseAnnotationCollector {
             String fieldName = element.getSimpleName().toString();
             String fieldTypeName = element.asType().toString();
 
-            Class<?> clazz=getClass(fieldTypeName);
-            if (!clazz.isInterface()){
-                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "field is not interface!" );
-                continue;
-            }
+//            Class<?> clazz=getClass(fieldTypeName);
+//            if (!clazz.isInterface()){
+//                processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "field is not interface!" );
+//                continue;
+//            }
 
             Object[] names = new Object[]{fieldName, fieldTypeName };
             nameList.add(names);
@@ -98,6 +98,7 @@ public class XAutoCollectorImp extends BaseAnnotationCollector {
 
     public Class<?> getClass(String fullName){
         try {
+            ClassLoader classLoader=getClass().getClassLoader();
             Class<?> clazz=getClass().getClassLoader().loadClass(fullName);
             return clazz;
         } catch (ClassNotFoundException e) {

@@ -5,7 +5,8 @@ import java.lang.annotation.ElementType;
 
 public class InjectDesc {
     public ElementType annotationType;
-
+    public String[] interfaces;
+    public String superClass;
     public String className;
 
     public Integer[] fieldValues;

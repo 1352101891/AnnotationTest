@@ -33,11 +33,9 @@ public class GeneratorForService extends BaseGenerator{
     }
 
     public  void generate(Class<?> annotationClazz,List<InjectDesc> injectDescs) {
-        if (injectDescs==null){
+        if (injectDescs==null || injectDescs.size()==0){
             return;
         }
-
-
 
         Map<String,Map<FieldBean,ClassBean>> map=new HashMap<>();
 
@@ -55,7 +53,7 @@ public class GeneratorForService extends BaseGenerator{
             String[] fields= interf.fieldTypeNames;
             if (fields!=null && fields.length>0){
                 for (int i=0;i<fields.length;i++) {
-                    if (isImp(fields[i],serviceList.get(i).className)){
+                    if (isImp(fields[i],serviceList.get(i).interfaces)){
                         if (map.get(interf.className)==null){
                             Map hashMap=new HashMap<FieldBean, ClassBean>();
                             hashMap.put(fields[i],serviceList.get(i).className);
@@ -136,8 +134,14 @@ public class GeneratorForService extends BaseGenerator{
      * @param fullname_Imp
      * @return
      */
-    public boolean isImp(String fullname,String fullname_Imp){
-        boolean flag=getClass(fullname).isAssignableFrom(getClass(fullname_Imp));
-        return flag;
+    public boolean isImp(String fullname,String[] fullname_inters){
+       if (fullname_inters!=null && fullname_inters.length>0){
+           for (String inter: fullname_inters) {
+               if (inter.equals(fullname)){
+                   return true;
+               }
+           }
+       }
+       return false;
     }
 }

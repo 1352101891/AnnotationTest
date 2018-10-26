@@ -16,6 +16,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 
 public class XServiceCollectorImp extends BaseAnnotationCollector {
@@ -45,6 +46,7 @@ public class XServiceCollectorImp extends BaseAnnotationCollector {
             }
 
             TypeElement classType = (TypeElement) element;
+            List<? extends TypeMirror> list= ((TypeElement) element).getInterfaces();
 
             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "current classType is:"+classType);
 
@@ -53,6 +55,11 @@ public class XServiceCollectorImp extends BaseAnnotationCollector {
                 nameList = new ArrayList<>();
                 targetClassMap.put(classType, nameList);
             }
+
+            if (list!=null && list.size()>0)
+                for (TypeMirror t:list) {
+                    nameList.add(new Object[]{t.toString()});
+                }
         }
 
         List<InjectDesc> injectDescList = new ArrayList<>(targetClassMap.size());
@@ -63,6 +70,14 @@ public class XServiceCollectorImp extends BaseAnnotationCollector {
             InjectDesc injectDesc = new InjectDesc();
             injectDesc.className = className;
             injectDesc.annotationType= ElementType.TYPE;
+
+            List<Object[]> list= entry.getValue();
+            if (list.size()>0){
+                injectDesc.interfaces=new String[list.size()];
+                for (int i=0;i<list.size();i++) {
+                    injectDesc.interfaces[i]= (String) list.get(i)[0];
+                }
+            }
 
             injectDescList.add(injectDesc);
         }
