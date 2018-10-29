@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
     @XAutowaired
     public humanDao Dao;
+    @XAutowaired
+    public humanDao Dao1;
 
 
     @SuppressLint("JavascriptInterface")
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
        // DynamicIntentProcessor.Init(this);
         BinderFactory.init(this);
-        auto_text.setText("我被绑定成功！"+Dao.getAllHuman().toString());
+        auto_text.setText("我被绑定成功！"+Dao.getAllHuman().toString()+",dao1"+Dao1.getAllHuman());
 
         Intent intent=getIntent();
         if (intent!=null){

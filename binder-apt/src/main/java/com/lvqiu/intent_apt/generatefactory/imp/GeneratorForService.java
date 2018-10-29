@@ -53,16 +53,19 @@ public class GeneratorForService extends BaseGenerator{
             String[] fields= interf.fieldTypeNames;
             if (fields!=null && fields.length>0){
                 for (int i=0;i<fields.length;i++) {
-                    if (isImp(fields[i],serviceList.get(i).interfaces)){
-                        FieldBean fieldBean=new FieldBean(interf.fieldTypeNames[i],interf.fieldNames[i]);
-                        ClassBean classBean=new ClassBean(serviceList.get(i).className,java.lang.reflect.Modifier.PUBLIC);
-                        if (map.get(interf.className)==null){
-                            Map hashMap=new HashMap<FieldBean, ClassBean>();
-                            hashMap.put(fieldBean,classBean);
-                            map.put(interf.className,hashMap);
-                        }else {
-                            Map hashMap=map.get(interf.className);
-                            hashMap.put(fieldBean,classBean);
+                    if (serviceList!=null && serviceList.size()>0) {
+                        for ( InjectDesc service: serviceList)
+                        if (isImp(fields[i],service.interfaces)) {
+                            FieldBean fieldBean = new FieldBean(interf.fieldTypeNames[i], interf.fieldNames[i]);
+                            ClassBean classBean = new ClassBean(service.className, java.lang.reflect.Modifier.PUBLIC);
+                            if (map.get(interf.className) == null) {
+                                Map hashMap = new HashMap<FieldBean, ClassBean>();
+                                hashMap.put(fieldBean, classBean);
+                                map.put(interf.className, hashMap);
+                            } else {
+                                Map hashMap = map.get(interf.className);
+                                hashMap.put(fieldBean, classBean);
+                            }
                         }
                     }
                 }
